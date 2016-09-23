@@ -69,7 +69,7 @@ bool ICACHE_FLASH_ATTR timeSync::processTimeStamp( String &str ) {
 }
 
 //***********************************************************************
-void ICACHE_FLASH_ATTR timeSync::calcAdjustment ( bool odd ) {
+void ICACHE_FLASH_ATTR timeSync::calcAdjustment( bool odd ) {
     staticThis->debugMsg( SYNC, "calcAdjustment(): odd=%u\n", odd);
     
     uint32_t    bestInterval = 0xFFFFFFFF;
