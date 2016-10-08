@@ -12,9 +12,10 @@ extern "C" {
 
 #include "easyMeshSync.h"
 
-//#define MESH_PREFIX         "mesh"
+//#define MESH_SSID           "mesh"
 //#define MESH_PASSWORD       "bootyboo"
 //#define MESH_PORT           4444
+
 #define NODE_TIMEOUT        3000000  //uSecs
 
 #define JSON_BUFSIZE        300 // initial size for the DynamicJsonBuffers.
@@ -68,6 +69,7 @@ enum debugType {
 
 struct meshConnectionType {
     espconn             *esp_conn;
+    uint8_t             nodeId[6] = {0,0,0,0,0,0};
     uint32_t            chipId = 0;
     String              subConnections;
     timeSync            time;
@@ -90,8 +92,9 @@ struct meshConnectionType {
 class easyMesh {
 public:
     //inline functions
-    uint32              getChipId( void ) { return _chipId;};
-   
+    //uint32              getChipId( void ) { return _chipId;};
+    uint8*              getNodeId( void ) { return _nodeId;}; 
+    
     // in easyMeshDebug.cpp
     void                setDebugMsgTypes( uint16_t types );
     void                debugMsg( debugType type, const char* format ... );
@@ -101,11 +104,14 @@ public:
     void                init( String prefix, String password, uint16_t port );
 
     void                update( void );
-    bool                sendSingle( uint32_t &destId, String &msg );
+    //bool                sendSingle( uint32_t &destId, String &msg );
+    bool                sendSingle( uint8_t &destId, String &msg ); //fix me
+    
     bool                sendBroadcast( String &msg );
     
     // in easyMeshConnection.cpp
-    void                setReceiveCallback( void(*onReceive)(uint32_t from, String &msg) );
+    //void                setReceiveCallback( void(*onReceive)(uint32_t from, String &msg) );
+    void                setReceiveCallback( void(*onReceive)(uint8_t *from, String &msg) ); 
     void                setNewConnectionCallback( void(*onNewConnection)(bool adopt) );
     uint16_t            connectionCount( meshConnectionType *exclude = NULL );
 
@@ -122,12 +128,18 @@ protected:
     
     // in easyMeshComm.cpp
     //must be accessable from callback
-    bool                sendMessage( meshConnectionType *conn, uint32_t destId, meshPackageType type, String &msg );
-    bool                sendMessage( uint32_t destId, meshPackageType type, String &msg );
-    bool                broadcastMessage( uint32_t fromId, meshPackageType type, String &msg, meshConnectionType *exclude = NULL );
-    
-    bool sendPackage( meshConnectionType *connection, String &package );
-    String buildMeshPackage(uint32_t destId, meshPackageType type, String &msg);
+    //bool                sendMessage( meshConnectionType *conn, uint32_t destId, meshPackageType type, String &msg );
+    //bool                sendMessage( uint32_t destId, meshPackageType type, String &msg );
+    //bool                sendMessage( uint32_t destId, meshPackageType type, String &msg );
+    //bool                broadcastMessage( uint32_t fromId, meshPackageType type, String &msg, meshConnectionType *exclude = NULL );
+    //bool                sendPackage( meshConnectionType *connection, String &package );
+    //String              buildMeshPackage(uint32_t destId, meshPackageType type, String &msg);
+    bool                sendMessage( meshConnectionType *conn, uint8_t &destId, meshPackageType type, String &msg ); 
+    bool                sendMessage( uint8_t &destId, meshPackageType type, String &msg ); 
+    bool                sendMessage( uint8_t &destId, meshPackageType type, String &msg );
+    bool                broadcastMessage( uint8_t &fromId, meshPackageType type, String &msg, meshConnectionType *exclude = NULL );
+    bool                sendPackage( meshConnectionType *connection, String &package ); 
+    String              buildMeshPackage(uint8_t &destId, meshPackageType type, String &msg); 
 
     
     // in easyMeshSync.cpp
@@ -141,7 +153,8 @@ protected:
     // in easyMeshConnection.cpp
     void                manageConnections( void );
     String              subConnectionJson( meshConnectionType *exclude );
-    meshConnectionType* findConnection( uint32_t chipId );
+    //meshConnectionType* findConnection( uint32_t chipId );
+    meshConnectionType* findConnection( uint8_t  &nodeId );
     meshConnectionType* findConnection( espconn *conn );
     void                cleanDeadConnections( void );
     void                tcpConnect( void );
@@ -173,9 +186,11 @@ protected:
     
 
     // variables
-    uint32_t    _chipId;
+    //uint32_t    _chipId;
+    uint8_t     _nodeId[] = {0,0,0,0,0,0};
     String      _mySSID;
-    String      _meshPrefix;
+    //String      _meshPrefix;
+    String      _meshSSID;
     String      _meshPassword;
     uint16_t    _meshPort;
     
