@@ -5,9 +5,9 @@
 #include <easyWebSocket.h>
 #include "animations.h"
 
-#define   MESH_SSID     "Mesh"
-#define   MESH_PASSWORD "Pass"
-#define   MESH_PORT      5555
+#define   MESH_PREFIX     "whateverYouLike"
+#define   MESH_PASSWORD   "somethingSneeky"
+#define   MESH_PORT       5555
 
 // globals
 easyMesh  mesh;  // mesh global
@@ -22,7 +22,7 @@ void setup() {
   // setup mesh
 //  mesh.setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE | APPLICATION ); // all types on
   mesh.setDebugMsgTypes( ERROR | STARTUP | APPLICATION );  // set before init() so that you can see startup messages
-  mesh.init( MESH_SSID, MESH_PASSWORD, MESH_PORT);
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, MESH_PORT);
   mesh.setReceiveCallback( &receivedCallback );
   mesh.setNewConnectionCallback( &newConnectionCallback );
 
@@ -33,8 +33,8 @@ void setup() {
   webSocketInit();
   webSocketSetReceiveCallback( &wsReceiveCallback );
   webSocketSetConnectionCallback( &wsConnectionCallback );
-  String NodeIdStr = mesh.int2str(mesh.getNodeId());
-  mesh.debugMsg( STARTUP, "\nIn setup() my nodeId=%s\n", NodeIdStr.c_str());
+
+  mesh.debugMsg( STARTUP, "\nIn setup() my chipId=%d\n", mesh.getChipId());
 
   strip.Begin();
   strip.Show();
@@ -85,8 +85,7 @@ void yerpCb( void *arg ) {
 
   SimpleList<meshConnectionType>::iterator connection = mesh._connections.begin();
   while ( connection != mesh._connections.end() ) {
-    String NodeIdStr = mesh.int2str(connection->nodeId);
-    mesh.debugMsg( APPLICATION, "\tconn#%d, nodeId=%s subs=%s\n", connCount++, NodeIdStr.c_str(), connection->subConnections.c_str() );
+    mesh.debugMsg( APPLICATION, "\tconn#%d, chipId=%d subs=%s\n", connCount++, connection->chipId, connection->subConnections.c_str() );
     connection++;
   }
 
@@ -103,7 +102,7 @@ void newConnectionCallback( bool adopt ) {
   }
 }
 
-void receivedCallback( uint64_t from, String &msg ) {
+void receivedCallback( uint32_t from, String &msg ) {
   mesh.debugMsg( APPLICATION, "receivedCallback():\n");
 
   DynamicJsonBuffer jsonBuffer(50);
