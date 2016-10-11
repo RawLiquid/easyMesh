@@ -17,9 +17,9 @@
 #define   BLINK_PERIOD    1000000 // microseconds until cycle repeat
 #define   BLINK_DURATION  100000  // microseconds LED is on for
 
-#define   MESH_SSID     "Mesh"
-#define   MESH_PASSWORD "Pass"
-#define   MESH_PORT      5555
+#define   MESH_PREFIX     "whateverYouLike"
+#define   MESH_PASSWORD   "somethingSneeky"
+#define   MESH_PORT       5555
 
 easyMesh  mesh;
 
@@ -62,13 +62,13 @@ void loop() {
   // if the time is ripe, send everyone a message!
   if ( sendMessageTime != 0 && sendMessageTime < mesh.getNodeTime() ){
     String msg = "Hello from node ";
-    msg += mesh.getNodeId();
+    msg += mesh.getChipId();
     mesh.sendBroadcast( msg );
     sendMessageTime = 0;
   }
 }
 
-void receivedCallback( uint64_t from, String &msg ) {
+void receivedCallback( uint32_t from, String &msg ) {
   Serial.printf("startHere: Received from %d msg=%s\n", from, msg.c_str());
 }
 
