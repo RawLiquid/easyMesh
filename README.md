@@ -1,6 +1,9 @@
 #This my HACK version
 This is my development version ... please see the original authors code https://github.com/Coopdis/easyMesh
 
+This branch of the easyMesh Library is a testing version for experimenting with setting a single SSID for all the nodes. This is accomplished by using part of the bssid(mac address) of the AP wireless interface of each node. The last 4 octets from the bssid are used to fill a uint32 value and used for the unique node id.
+![Encode easyMesh NodeId](/easymesh_nodeid.png?raw=true "Encode easyMesh NodeId")
+
 #Intro to easyMesh
 easyMesh is a library that takes care of the particulars for creating a simple mesh network using Arduino and esp8266.  The goal is to allow the programmer to work with a mesh network without having to worry about how the network is structured or managed.  
 
