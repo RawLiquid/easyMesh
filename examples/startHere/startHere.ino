@@ -17,7 +17,7 @@
 #define   BLINK_PERIOD    1000000 // microseconds until cycle repeat
 #define   BLINK_DURATION  100000  // microseconds LED is on for
 
-#define   MESH_PREFIX     "whateverYouLike"
+#define   MESH_SSID       "whateverYouLike"
 #define   MESH_PASSWORD   "somethingSneeky"
 #define   MESH_PORT       5555
 
@@ -33,7 +33,7 @@ void setup() {
 //mesh.setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE ); // all types on
   mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
 
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, MESH_PORT );
+  mesh.init( MESH_SSID, MESH_PASSWORD, MESH_PORT );
   mesh.setReceiveCallback( &receivedCallback );
   mesh.setNewConnectionCallback( &newConnectionCallback );
 
@@ -62,7 +62,7 @@ void loop() {
   // if the time is ripe, send everyone a message!
   if ( sendMessageTime != 0 && sendMessageTime < mesh.getNodeTime() ){
     String msg = "Hello from node ";
-    msg += mesh.getChipId();
+    msg += mesh.getNodeId();
     mesh.sendBroadcast( msg );
     sendMessageTime = 0;
   }
