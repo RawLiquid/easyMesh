@@ -1,7 +1,8 @@
 #This my HACK version
 This is my development version ... please see the original authors code https://github.com/Coopdis/easyMesh
 
-This branch of the easyMesh Library is a testing version for experimenting with setting a single SSID for all the nodes. This is accomplished by using part of the bssid(mac address) of the AP wireless interface of each node. The last 4 octets from the bssid are used to fill a uint32 value and used for the unique node id.
+This branch of the easyMesh Library is for setting all of the mesh nodes to have one (the same) SSID instead of embbeding the chipid within the SSID of each node. This is accomplished by using part (the last 4 octets) of the bssid(mac address) of the AP wireless interface of each node to poulate a uint32 interger that is used for the unique node id.
+
 ![Encode easyMesh NodeId](/easymesh_nodeid.png?raw=true "Encode easyMesh NodeId")
 
 #Intro to easyMesh
