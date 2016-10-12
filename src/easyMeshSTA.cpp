@@ -163,7 +163,7 @@ bool ICACHE_FLASH_ATTR easyMesh::connectToBestAP( void ) {
     debugMsg( CONNECTION, "connectToBestAP(): Best AP is %d<---\n", encodeNodeId( bestAP->bssid ));
     struct station_config stationConf;
     stationConf.bssid_set = 1;
-    memcpy(&stationConf.ssid, bestAP->bssid, 6);
+    memcpy(&stationConf.bssid, bestAP->bssid, 6);
     memcpy(&stationConf.ssid, bestAP->ssid, 32);
     memcpy(&stationConf.password, _meshPassword.c_str(), 64);
     wifi_station_set_config(&stationConf);
