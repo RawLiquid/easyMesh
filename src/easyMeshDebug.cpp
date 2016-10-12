@@ -37,4 +37,3 @@ void easyMesh::debugMsg( debugType type, const char* format ... ) {
         va_end(args);
     }
 }
-
