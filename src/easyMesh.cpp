@@ -33,9 +33,10 @@ uint16_t  count = 0;
     
     // start configuration
     debugMsg( GENERAL, "wifi_set_opmode(STATIONAP_MODE) succeeded? %d\n", wifi_set_opmode( STATIONAP_MODE ) );
-    
-    _chipId = system_get_chip_id();
-    _mySSID = String( MESH_PREFIX ) + String( _chipId );
+    uint8_t  MAC[] = {0,0,0,0,0,0};
+    wifi_get_macaddr(SOFTAP_IF, MAC);    
+    _nodeId = encodeNodeId(MAC);
+    _meshSSID = String( MESH_SSID );
     
     apInit();       // setup AP
     stationInit();  // setup station
@@ -44,7 +45,7 @@ uint16_t  count = 0;
 }
 */
 //***********************************************************************
-void ICACHE_FLASH_ATTR easyMesh::init( String prefix, String password, uint16_t port ) {
+void ICACHE_FLASH_ATTR easyMesh::init( String ssid, String password, uint16_t port ) {
     // shut everything down, start with a blank slate.
     debugMsg( STARTUP, "init():\n",    wifi_station_set_auto_connect( 0 ));
     
@@ -61,11 +62,13 @@ void ICACHE_FLASH_ATTR easyMesh::init( String prefix, String password, uint16_t 
     // start configuration
     debugMsg( GENERAL, "wifi_set_opmode(STATIONAP_MODE) succeeded? %d\n", wifi_set_opmode( STATIONAP_MODE ) );
     
-    _meshPrefix = prefix;
+    _meshSSID = ssid;
     _meshPassword = password;
     _meshPort = port;
-    _chipId = system_get_chip_id();
-    _mySSID = _meshPrefix + String( _chipId );
+
+    uint8_t MAC[] = {0,0,0,0,0,0};
+    wifi_get_macaddr(SOFTAP_IF, MAC);    
+    _nodeId = encodeNodeId(MAC);
     
     apInit();       // setup AP
     stationInit();  // setup station
@@ -89,7 +92,6 @@ bool ICACHE_FLASH_ATTR easyMesh::sendSingle( uint32_t &destId, String &msg ){
 //***********************************************************************
 bool ICACHE_FLASH_ATTR easyMesh::sendBroadcast( String &msg ) {
     debugMsg( COMMUNICATION, "sendBroadcast(): msg=%s\n", msg.c_str());
-    broadcastMessage( _chipId, BROADCAST, msg );
+    broadcastMessage( _nodeId, BROADCAST, msg );
 }
-
 
