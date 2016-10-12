@@ -5,7 +5,7 @@
 #include <easyWebSocket.h>
 #include "animations.h"
 
-#define   MESH_PREFIX     "whateverYouLike"
+#define   MESH_SSID       "whateverYouLike"
 #define   MESH_PASSWORD   "somethingSneeky"
 #define   MESH_PORT       5555
 
@@ -22,7 +22,7 @@ void setup() {
   // setup mesh
 //  mesh.setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE | APPLICATION ); // all types on
   mesh.setDebugMsgTypes( ERROR | STARTUP | APPLICATION );  // set before init() so that you can see startup messages
-  mesh.init( MESH_PREFIX, MESH_PASSWORD, MESH_PORT);
+  mesh.init( MESH_SSID, MESH_PASSWORD, MESH_PORT);
   mesh.setReceiveCallback( &receivedCallback );
   mesh.setNewConnectionCallback( &newConnectionCallback );
 
@@ -34,7 +34,7 @@ void setup() {
   webSocketSetReceiveCallback( &wsReceiveCallback );
   webSocketSetConnectionCallback( &wsConnectionCallback );
 
-  mesh.debugMsg( STARTUP, "\nIn setup() my chipId=%d\n", mesh.getChipId());
+  mesh.debugMsg( STARTUP, "\nIn setup() my nodeId=%d\n", mesh.getNodeId());
 
   strip.Begin();
   strip.Show();
@@ -85,7 +85,7 @@ void yerpCb( void *arg ) {
 
   SimpleList<meshConnectionType>::iterator connection = mesh._connections.begin();
   while ( connection != mesh._connections.end() ) {
-    mesh.debugMsg( APPLICATION, "\tconn#%d, chipId=%d subs=%s\n", connCount++, connection->chipId, connection->subConnections.c_str() );
+    mesh.debugMsg( APPLICATION, "\tconn#%d, nodeId=%d subs=%s\n", connCount++, connection->nodeId, connection->subConnections.c_str() );
     connection++;
   }
 
