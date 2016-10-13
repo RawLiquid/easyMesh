@@ -5,7 +5,7 @@ This branch of the easyMesh Library is for setting all of the mesh nodes to have
 
 ![Encode easyMesh NodeId](/easymesh_nodeid.png?raw=true "Encode easyMesh NodeId")
 
-I also made a change (in my code) to set all APs to a single IP address ... but I left it remarked out ... if anyone (with more than 1 esp) wants to test if this will work ... the line is located in easyMeshAP.cpp in function apInit() ... currently line #26
+I also made a change to set all APs to a single IP address ... but I left it remarked out ... if anyone (with more than 1 esp) wants to test if this will work ... the line is located in easyMeshAP.cpp in function apInit() ... currently line #26
 ```
     ip_addr ip, netmask;
     IP4_ADDR( &ip, 192, 168, ( _nodeId & 0xFF ), 1);
