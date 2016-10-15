@@ -23,7 +23,6 @@ void ICACHE_FLASH_ATTR easyMesh::apInit( void  ) {
     
     ip_addr ip, netmask;
     IP4_ADDR( &ip, 192, 168, ( _nodeId & 0xFF ), 1);
-//    IP4_ADDR( &ip, 192, 168, 1, 1); // testme
     IP4_ADDR( &netmask, 255, 255, 255, 0);
     
     ip_info ipInfo;
