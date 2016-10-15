@@ -47,10 +47,13 @@ void ICACHE_FLASH_ATTR easyMesh::apInit( void  ) {
     memset( apConfig.password, 0, 64);
     memcpy( apConfig.ssid, _meshSSID.c_str(), _meshSSID.length());
     memcpy( apConfig.password, _meshPassword.c_str(), _meshPassword.length() );
-    apConfig.authmode = AUTH_WPA2_PSK;
+
+    apConfig.authmode = _meshAuthMode; // AUTH_WPA2_PSK
     apConfig.ssid_len = _meshSSID.length();
+    apConfig.ssid_hidden = _meshHidden;
+    apConfig.channel = _meshChannel;
     apConfig.beacon_interval = 100;
-    apConfig.max_connection = 4; // how many stations can connect to ESP8266 softAP at most.
+    apConfig.max_connection = _meshMaxConn; // how many stations can connect to ESP8266 softAP at most.
     
     wifi_softap_set_config(&apConfig);// Set ESP8266 softap config .
     if ( !wifi_softap_dhcps_start() )
