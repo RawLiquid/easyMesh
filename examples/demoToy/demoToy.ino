@@ -5,9 +5,15 @@
 #include <easyWebSocket.h>
 #include "animations.h"
 
-#define   MESH_SSID       "whateverYouLike"
-#define   MESH_PASSWORD   "somethingSneeky"
+#define   MESH_SSID       "Mesh"
+#define   MESH_PASSWORD   "Password"
 #define   MESH_PORT       5555
+#define   MESH_AUTHMODE   AUTH_WPA2_PSK // AUTH_OPEN, AUTH_WPA_PSK, AUTH_WPA2_PSK, AUTH_WPA_WPA2_PSK
+#define   MESH_CHANNEL    1             // 0 ~ 13
+#define   MESH_PHYMODE    PHY_MODE_11G  // PHY_MODE_11G, PHY_MODE_11B
+#define   MESH_MAXTPW     50            // 0 ~ 82 (unit:0.25dBm)
+#define   MESH_HIDDEN     0             // 0 ~ 1   
+#define   MESH_MAXCONN    4             // 1 ~ 4
 
 // globals
 easyMesh  mesh;  // mesh global
@@ -22,7 +28,7 @@ void setup() {
   // setup mesh
 //  mesh.setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE | APPLICATION ); // all types on
   mesh.setDebugMsgTypes( ERROR | STARTUP | APPLICATION );  // set before init() so that you can see startup messages
-  mesh.init( MESH_SSID, MESH_PASSWORD, MESH_PORT);
+  mesh.init( MESH_SSID, MESH_PASSWORD, MESH_PORT, AUTH_WPA2_PSK, MESH_CHANNEL, MESH_PHYMODE, MESH_MAXTPW, MESH_HIDDEN, MESH_MAXCONN );
   mesh.setReceiveCallback( &receivedCallback );
   mesh.setNewConnectionCallback( &newConnectionCallback );
 
