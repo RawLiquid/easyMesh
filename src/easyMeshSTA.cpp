@@ -72,8 +72,18 @@ void ICACHE_FLASH_ATTR easyMesh::startStationScan( void ) {
     if ( _scanStatus != IDLE ) {
         return;
     }
-    
-    if ( !wifi_station_scan(NULL, stationScanCb) ) {
+
+    char tempssid[32];
+    struct scan_config scanConfig;
+    memset( &scanConfig, 0, sizeof(scanConfig) );
+    staticThis->_meshSSID.toCharArray( tempssid, staticThis->_meshSSID.length()+1 );
+
+    scanConfig.ssid = (uint8_t *) tempssid; // limit scan to mesh ssid
+    scanConfig.bssid = 0; 
+    scanConfig.channel = staticThis->_meshChannel; // also limit scan to mesh channel to speed things up ...
+    scanConfig.show_hidden = 1; // add hidden APs ... why not? we might want to hide ...
+
+    if ( !wifi_station_scan( &scanConfig, stationScanCb ) ) {
         debugMsg( ERROR, "wifi_station_scan() failed!?\n");
         return;
     }
@@ -99,10 +109,8 @@ void ICACHE_FLASH_ATTR easyMesh::stationScanCb(void *arg, STATUS status) {
     staticThis->_meshAPs.clear();
     while (bssInfo != NULL) {
         staticThis->debugMsg( CONNECTION, "\tfound : % s, % ddBm", (char*)bssInfo->ssid, (int16_t) bssInfo->rssi );
-        if ( strncmp( (char*)bssInfo->ssid, staticThis->_meshSSID.c_str(), staticThis->_meshSSID.length() ) == 0 ) {
-            staticThis->debugMsg( CONNECTION, " MESH< ---");
-            staticThis->_meshAPs.push_back( *bssInfo );
-        }
+        staticThis->debugMsg( CONNECTION, " MESH< ---");
+        staticThis->_meshAPs.push_back( *bssInfo );
         staticThis->debugMsg( CONNECTION, "\n");
         bssInfo = STAILQ_NEXT(bssInfo, next);
     }
