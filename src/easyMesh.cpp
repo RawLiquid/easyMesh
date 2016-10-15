@@ -45,7 +45,7 @@ uint16_t  count = 0;
 }
 */
 //***********************************************************************
-void ICACHE_FLASH_ATTR easyMesh::init( String ssid, String password, uint16_t port ) {
+void ICACHE_FLASH_ATTR easyMesh::init( String ssid, String password, uint16_t port, _auth_mode authmode, uint8_t channel, phy_mode_t phymode, uint8_t maxtpw, uint8_t hidden, uint8_t maxconn ) {
     // shut everything down, start with a blank slate.
     debugMsg( STARTUP, "init():\n",    wifi_station_set_auto_connect( 0 ));
     
@@ -56,6 +56,9 @@ void ICACHE_FLASH_ATTR easyMesh::init( String ssid, String password, uint16_t po
     wifi_softap_dhcps_stop();
     
     wifi_set_event_handler_cb( wifiEventCb );
+
+    wifi_set_phy_mode( phymode ); // allow setting PHY_MODE_11G / PHY_MODE_11B
+    system_phy_set_max_tpw( maxtpw ); //maximum value of RF Tx Power, unit : 0.25dBm, range [0,82]
     
     staticThis = this;  // provides a way for static callback methods to access "this" object;
     
@@ -65,6 +68,12 @@ void ICACHE_FLASH_ATTR easyMesh::init( String ssid, String password, uint16_t po
     _meshSSID = ssid;
     _meshPassword = password;
     _meshPort = port;
+    _meshChannel = channel;
+    _meshAuthMode = authmode;
+    if( password == "" )
+        _meshAuthMode = AUTH_OPEN; //if no password ... set auth mode to open
+    _meshHidden = hidden;
+    _meshMaxConn = maxconn;
 
     uint8_t MAC[] = {0,0,0,0,0,0};
     wifi_get_macaddr(SOFTAP_IF, MAC);    
@@ -94,4 +103,3 @@ bool ICACHE_FLASH_ATTR easyMesh::sendBroadcast( String &msg ) {
     debugMsg( COMMUNICATION, "sendBroadcast(): msg=%s\n", msg.c_str());
     broadcastMessage( _nodeId, BROADCAST, msg );
 }
-
