@@ -5,14 +5,7 @@ This branch of the easyMesh Library is for setting all of the mesh nodes to have
 
 ![Encode easyMesh NodeId](/easymesh_nodeid.png?raw=true "Encode easyMesh NodeId")
 
-I also made a change to set all APs to a single IP address ... but I left it remarked out ... if anyone (with more than 1 esp) wants to test if this will work ... the line is located in easyMeshAP.cpp in function apInit() ... currently line #26
-```
-    ip_addr ip, netmask;
-    IP4_ADDR( &ip, 192, 168, ( _nodeId & 0xFF ), 1);
-//    IP4_ADDR( &ip, 192, 168, 1, 1); // testme
-    IP4_ADDR( &netmask, 255, 255, 255, 0);
-```
-just remark out the first IP4_ADDR line and un-remark the second IP4_ADDR ... If everything works the mesh should still function as usual ... and you should be able to connect to any of the APs ... and open 192.168.1.1 from a web browser ... try connecting to each APs wifi ... then test the web page ...
+I have tested setting all APs to a single IP address ... but it didn't work ...the two nodes stop responding to one another ... although the client wifi device connectes fine ...
 
 #Intro to easyMesh
 easyMesh is a library that takes care of the particulars for creating a simple mesh network using Arduino and esp8266.  The goal is to allow the programmer to work with a mesh network without having to worry about how the network is structured or managed.  
