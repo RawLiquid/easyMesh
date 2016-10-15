@@ -97,8 +97,7 @@ public:
     
     // in easyMesh.cpp
 //    void                init( void );
-    void                init( String ssid, String password, uint16_t port );
-
+    void                init( String ssid, String password, uint16_t port, _auth_mode authmode = AUTH_WPA2_PSK, uint8_t channel = 0, phy_mode_t phymode = PHY_MODE_11G, uint8_t maxtpw = 82, uint8_t hidden = 0, uint8_t maxconn = 4 );
     void                update( void );
     bool                sendSingle( uint32_t &destId, String &msg );
     bool                sendBroadcast( String &msg );
@@ -176,7 +175,11 @@ protected:
     String      _meshSSID;
     String      _meshPassword;
     uint16_t    _meshPort;
-    
+    uint8_t     _meshChannel;
+    _auth_mode  _meshAuthMode;
+    uint8_t	_meshHidden;
+    uint8_t	_meshMaxConn;
+
     os_timer_t  _scanTimer;
     
     espconn     _meshServerConn;
