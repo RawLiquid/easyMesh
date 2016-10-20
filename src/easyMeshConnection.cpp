@@ -282,7 +282,8 @@ void ICACHE_FLASH_ATTR easyMesh::meshRecvCb(void *arg, char *data, unsigned shor
     }
 
 
-    
+    String somestring(data);      //copy data before json parsing FIXME: can someone explain why this works?
+
     DynamicJsonBuffer jsonBuffer( JSON_BUFSIZE );
     JsonObject& root = jsonBuffer.parseObject( data );
     if (!root.success()) {   // Test if parsing succeeded.
