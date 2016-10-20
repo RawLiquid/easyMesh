@@ -107,7 +107,7 @@ void ICACHE_FLASH_ATTR timeSync::calcAdjustment( bool odd ) {
 // easyMesh Syncing functions
 //***********************************************************************
 void ICACHE_FLASH_ATTR easyMesh::startNodeSync( meshConnectionType *conn ) {
-    debugMsg( SYNC, "startNodeSync(): with %u\n", conn->nodeId);
+    debugMsg( SYNC, "startNodeSync(): with %u\n", conn->nodeId );
 
     String subs = subConnectionJson( conn );
     sendMessage( conn, conn->nodeId, NODE_SYNC_REQUEST, subs );
@@ -117,7 +117,7 @@ void ICACHE_FLASH_ATTR easyMesh::startNodeSync( meshConnectionType *conn ) {
 
 //***********************************************************************
 void ICACHE_FLASH_ATTR easyMesh::handleNodeSync( meshConnectionType *conn, JsonObject& root ) {
-    debugMsg( SYNC, "handleNodeSync(): with %u\n", conn->nodeId);
+    debugMsg( SYNC, "handleNodeSync(): with %u\n", conn->nodeId );
     
     meshPackageType type = (meshPackageType)(int)root["type"];
     uint32_t        remoteNodeId = (uint32_t)root["from"];
@@ -150,7 +150,7 @@ void ICACHE_FLASH_ATTR easyMesh::handleNodeSync( meshConnectionType *conn, JsonO
         {
             debugMsg( SYNC, "handleNodeSync(): valid NODE_SYNC_REQUEST %d sending NODE_SYNC_REPLY\n", conn->nodeId );
             String myOtherSubConnections = subConnectionJson( conn );
-            sendMessage( conn, _nodeId, NODE_SYNC_REPLY, myOtherSubConnections );
+            sendMessage( conn, conn->nodeId, NODE_SYNC_REPLY, myOtherSubConnections );
             break;
         }
         case NODE_SYNC_REPLY:
@@ -188,7 +188,7 @@ void ICACHE_FLASH_ATTR easyMesh::startTimeSync( meshConnectionType *conn ) {
     //   debugMsg( GENERAL, "startTimeSync(): remoteSubCount=%d adopt=%d\n", remoteSubCount, conn->time.adopt);
     
     String timeStamp = conn->time.buildTimeStamp();
-    staticThis->sendMessage( conn, _nodeId, TIME_SYNC, timeStamp );
+    staticThis->sendMessage( conn, conn->nodeId, TIME_SYNC, timeStamp );
     
     conn->timeSyncStatus = IN_PROGRESS;
 }
@@ -202,7 +202,7 @@ bool ICACHE_FLASH_ATTR easyMesh::adoptionCalc( meshConnectionType *conn ) {
     
     bool ret = ( mySubCount > remoteSubCount ) ? false : true;
     
-    debugMsg( GENERAL, "adoptionCalc(): mySubCount=%d remoteSubCount=%d ret = %d\n", mySubCount, remoteSubCount, ret);
+    debugMsg( GENERAL, "adoptionCalc(): mySubCount=%d remoteSubCount=%d ret = %d\n", mySubCount, remoteSubCount, ret );
     
     return ret;
 }
@@ -211,15 +211,15 @@ bool ICACHE_FLASH_ATTR easyMesh::adoptionCalc( meshConnectionType *conn ) {
 void ICACHE_FLASH_ATTR easyMesh::handleTimeSync( meshConnectionType *conn, JsonObject& root ) {
     
     String timeStamp = root["msg"];
-    debugMsg( SYNC, "handleTimeSync(): with %d in timestamp=%s\n", conn->nodeId, timeStamp.c_str());
+    debugMsg( SYNC, "handleTimeSync(): with %d in timestamp=%s\n", conn->nodeId, timeStamp.c_str() );
     
     conn->time.processTimeStamp( timeStamp );  //varifies timeStamp and updates it with a new one.
 
-    debugMsg( SYNC, "handleTimeSync(): with %d out timestamp=%s\n", conn->nodeId, timeStamp.c_str());
+    debugMsg( SYNC, "handleTimeSync(): with %d out timestamp=%s\n", conn->nodeId, timeStamp.c_str() );
 
     
     if ( conn->time.num < TIME_SYNC_CYCLES ) {
-        staticThis->sendMessage( conn, _nodeId, TIME_SYNC, timeStamp );
+        staticThis->sendMessage( conn, conn->nodeId, TIME_SYNC, timeStamp );
     }
     
     uint8_t odd = conn->time.num % 2;
