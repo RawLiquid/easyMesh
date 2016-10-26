@@ -47,11 +47,17 @@ meshConnectionType* ICACHE_FLASH_ATTR easyMesh::closeConnection( meshConnectionT
 //***********************************************************************
 void ICACHE_FLASH_ATTR easyMesh::manageConnections( void ) {
     debugMsg( GENERAL, "manageConnections():\n");
+
+    uint32_t nowNodeTime;
+    uint32_t nodeTimeOut = NODE_TIMEOUT;
+    uint32_t connLastRecieved;
+    
     SimpleList<meshConnectionType>::iterator connection = _connections.begin();
     while ( connection != _connections.end() ) {
-        if ( connection->lastRecieved + NODE_TIMEOUT < getNodeTime() ) {
-            debugMsg( CONNECTION, "manageConnections(): dropping %d NODE_TIMEOUT last=%u node=%u\n", connection->nodeId, connection->lastRecieved, getNodeTime() );
- 
+        nowNodeTime = getNodeTime();
+        connLastRecieved = connection->lastRecieved;
+        if ( nowNodeTime - connLastRecieved > nodeTimeOut ) {
+            debugMsg( CONNECTION, "manageConnections(): dropping %d now= %u - last= %u ( %u ) > timeout= %u \n", connection->chipId, nowNodeTime, connLastRecieved, nowNodeTime - connLastRecieved, nodeTimeOut ); 
             connection = closeConnection( connection );
             continue;
         }
@@ -98,11 +104,11 @@ void ICACHE_FLASH_ATTR easyMesh::manageConnections( void ) {
         if ( connection->nodeSyncRequest == 0 ) { // nodeSync not in progress
             if (    (connection->esp_conn->proto.tcp->local_port == _meshPort  // we are AP
                      &&
-                     connection->lastRecieved + ( NODE_TIMEOUT / 2 ) < nodeTime )
+                     nowNodeTime - connLastRecieved > ( nodeTimeOut / 2 ) )
                 ||
                     (connection->esp_conn->proto.tcp->local_port != _meshPort  // we are the STA
                      &&
-                     connection->lastRecieved + ( NODE_TIMEOUT * 3 / 4 ) < nodeTime )
+                     nowNodeTime - connLastRecieved > ( nodeTimeOut * 3 / 4 ) )
                 ) {
                 connection->nodeSyncStatus = NEEDED;
             }
@@ -327,6 +333,7 @@ void ICACHE_FLASH_ATTR easyMesh::meshRecvCb(void *arg, char *data, unsigned shor
     
     // record that we've gotten a valid package
     receiveConn->lastRecieved = staticThis->getNodeTime();
+    staticThis->debugMsg( COMMUNICATION, "meshRecvCb(): lastRecieved=%u fromId=%d\n", receiveConn->lastRecieved, receiveConn->chipId );
     return;
 }
 
