@@ -13,7 +13,7 @@ uint32_t timeAdjuster = 0;
 uint32_t ICACHE_FLASH_ATTR easyMesh::getNodeTime( void ) {
     uint32_t ret = system_get_time() + timeAdjuster;
 
-    debugMsg( GENERAL, "getNodeTime(): time=%d\n", ret);
+    debugMsg( GENERAL, "getNodeTime(): time=%u\n", ret);
     
     return ret;
 }
@@ -107,7 +107,7 @@ void ICACHE_FLASH_ATTR timeSync::calcAdjustment( bool odd ) {
 // easyMesh Syncing functions
 //***********************************************************************
 void ICACHE_FLASH_ATTR easyMesh::startNodeSync( meshConnectionType *conn ) {
-    debugMsg( SYNC, "startNodeSync(): with %u\n", conn->nodeId );
+    debugMsg( SYNC, "startNodeSync(): with %d\n", conn->nodeId );
 
     String subs = subConnectionJson( conn );
     sendMessage( conn, conn->nodeId, NODE_SYNC_REQUEST, subs );
@@ -117,7 +117,7 @@ void ICACHE_FLASH_ATTR easyMesh::startNodeSync( meshConnectionType *conn ) {
 
 //***********************************************************************
 void ICACHE_FLASH_ATTR easyMesh::handleNodeSync( meshConnectionType *conn, JsonObject& root ) {
-    debugMsg( SYNC, "handleNodeSync(): with %u\n", conn->nodeId );
+    debugMsg( SYNC, "handleNodeSync(): with %d\n", conn->nodeId );
     
     meshPackageType type = (meshPackageType)(int)root["type"];
     uint32_t        remoteNodeId = (uint32_t)root["from"];
