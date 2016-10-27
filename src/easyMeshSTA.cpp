@@ -88,7 +88,7 @@ void ICACHE_FLASH_ATTR easyMesh::startStationScan( void ) {
         return;
     }
     _scanStatus = SCANNING;
-    debugMsg( CONNECTION, "-->scan started @ %d<--\n", system_get_time());
+    debugMsg( CONNECTION, "-->scan started @ %u<--\n", staticThis->getNodeTime() );
     return;
 }
 
@@ -104,7 +104,7 @@ void ICACHE_FLASH_ATTR easyMesh::scanTimerCallback( void *arg ) {
 void ICACHE_FLASH_ATTR easyMesh::stationScanCb(void *arg, STATUS status) {
     char ssid[32];
     bss_info *bssInfo = (bss_info *)arg;
-    staticThis->debugMsg( CONNECTION, "stationScanCb():-- > scan finished @ % d < --\n", system_get_time());
+    staticThis->debugMsg( CONNECTION, "stationScanCb():-- > scan finished @ %u < --\n", staticThis->getNodeTime() );
     staticThis->_scanStatus = IDLE;
     
     staticThis->_meshAPs.clear();
