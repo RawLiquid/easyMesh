@@ -1,3 +1,12 @@
+#This my HACK version
+This is my development version ... please see the original authors code https://github.com/Coopdis/easyMesh
+
+This branch of the easyMesh Library is for setting all of the mesh nodes to have one (the same) SSID instead of embbeding the chipid within the SSID of each node. This is accomplished by using part (the last 4 octets) of the bssid(mac address) of the AP wireless interface of each node to poulate a uint32 interger that is used for the unique node id.
+
+![Encode easyMesh NodeId](/easymesh_nodeid.png?raw=true "Encode easyMesh NodeId")
+
+I have tested setting all APs to a single IP address ... but it didn't work ...the two nodes stop responding to one another ... although the client wifi device connectes fine ...
+
 #Intro to easyMesh
 easyMesh is a library that takes care of the particulars for creating a simple mesh network using Arduino and esp8266.  The goal is to allow the programmer to work with a mesh network without having to worry about how the network is structured or managed.  
 
@@ -11,7 +20,7 @@ easyMesh uses JSON objects for all its messaging.  There a couple of reasons for
 easyMesh is designed to be used with Arduino, but it does not use the Arduino WiFi libraries, as I was running into performance issues (primarily latency) with them.  Rather the networking is all done using the native esp8266 SDK libraries, which are available through the Arduino IDE.  Hopefully though, which networking libraries are used won’t matter to most users much as you can just include the .h, run the init() and then work the library through the API.
 
 ###easyMesh is not IP networking
-easyMesh does not create a TCP/IP network of nodes. Rather each of the nodes is uniquely identified by its 32bit chipId which is retrieved from the esp8266 using the system_get_chip_id() call in the SDK.  Every esp8266 will have a unique number.  Messages can either be broadcast to all of the nodes on the mesh, or sent specifically to an individual node which is identified by its chipId.
+easyMesh does not create a TCP/IP network of nodes. Rather each of the nodes is uniquely identified by its 32bit nodeId which is retrieved from the esp8266 using the wifi_get_macaddr(SOFTAP_IF) call from the SDK and encoding it into a 32bit interger.  Every esp8266 will have a unique number.  Messages can either be broadcast to all of the nodes on the mesh, or sent specifically to an individual node which is identified by its nodeId.
 
 ###Examples
 demoToy is currently the only example.  It is kind of complex, uses a web server, web sockets, and neopixel animations, so it is not really a great entry level example.  That said, it does some pretty cools stuff… here is a video of the demo.
@@ -35,14 +44,14 @@ easyMesh  mesh;
 
 ##Member Functions
 
-###void easyMesh::init( String prefix, String password, uint16_t port )
+###void easyMesh::init( String ssid, String password, uint16_t port )
 Add this to your setup() function.
 Initialize the mesh network.  This routine does the following things…
 - Starts a wifi network
 - Begins searching for other wifi networks that are part of the mesh
 - Logs on to the best mesh network node it finds… if it doesn’t find anything, it starts a new search in 5 seconds.
 
-prefix = the name of your mesh.  The wifi ssid of this node will be prefix + chipId
+ssid = the ssid of your mesh.
 password = wifi password to your mesh
 port = the TCP port that you want the mesh server to run on
 
@@ -87,8 +96,8 @@ returns true if everything works, false if not.  Prints an error message to Seri
 ###uint16_t easyMesh::connectionCount()
 Returns the total number of nodes connected to this mesh.
 
-###uint32_t easyMesh::getChipId( void )
-Return the chipId of the node that we are running on.
+###uint32_t easyMesh::getNodeId( void )
+Return the nodeId of the node that we are running on.
 
 ###uint32_t easyMesh::getNodeTime( void )
 Returns the mesh timebase microsecond counter.  Rolls over 71 minutes from startup of the first node.
