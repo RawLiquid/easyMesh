@@ -181,8 +181,8 @@ void ICACHE_FLASH_ATTR easyMesh::tcpConnect( void ) {
     if ( wifi_station_get_connect_status() == STATION_GOT_IP && ipconfig.ip.addr != 0 ) {
         // we have successfully connected to wifi as a station.
         debugMsg( CONNECTION, "tcpConnect(): Got local IP=%d.%d.%d.%d\n", IP2STR(&ipconfig.ip) );
+//rw        debugMsg( CONNECTION, "tcpConnect(): Dest IP=%d.%d.%d.%d\n", IP2STR( &ipconfig.gw ) );
         debugMsg( CONNECTION, "tcpConnect(): Dest IP=%d.%d.%d.%d\n", IP2STR( &ipconfig.gw ) );
-        
         // establish tcp connection
         _stationConn.type = ESPCONN_TCP;
         _stationConn.state = ESPCONN_NONE;
@@ -190,7 +190,12 @@ void ICACHE_FLASH_ATTR easyMesh::tcpConnect( void ) {
         _stationConn.proto.tcp->local_port = espconn_port();
         _stationConn.proto.tcp->remote_port = _meshPort;
         os_memcpy(_stationConn.proto.tcp->local_ip, &ipconfig.ip, 4);
-        os_memcpy(_stationConn.proto.tcp->remote_ip, &ipconfig.gw, 4);
+//rw        os_memcpy(_stationConn.proto.tcp->remote_ip, &ipconfig.gw, 4);
+        os_memcpy(_stationConn.proto.tcp->remote_ip, &ipconfig.ip, 3);
+        //if (&ipconfig.gw ==  IPADDR_ANY) {
+            _stationConn.proto.tcp->remote_ip[3] = 1;
+        //} else {  }
+
         espconn_set_opt( &_stationConn, ESPCONN_NODELAY ); // low latency, but soaks up bandwidth
         
         debugMsg( CONNECTION, "tcpConnect(): connecting type=%d, state=%d, local_ip=%d.%d.%d.%d, local_port=%d, remote_ip=%d.%d.%d.%d remote_port=%d\n",

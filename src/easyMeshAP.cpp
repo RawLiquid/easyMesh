@@ -27,16 +27,19 @@ void ICACHE_FLASH_ATTR easyMesh::apInit( void  ) {
     
     ip_info ipInfo;
     ipInfo.ip = ip;
-    ipInfo.gw = ip;
+//testing how this behaves without the GW included -- RawLiquid
+         IP4_ADDR( &ipInfo.gw, 255, 255, 255, 255);
     ipInfo.netmask = netmask;
     if ( !wifi_set_ip_info( SOFTAP_IF, &ipInfo ) ) {
         debugMsg( ERROR, "wifi_set_ip_info() failed\n");
     }
-    
-    debugMsg( STARTUP, "apInit(): Starting AP with SSID=%s IP=%d.%d.%d.%d GW=%d.%d.%d.%d NM=%d.%d.%d.%d\n",
+
+// testing - remove gw from info    
+//    debugMsg( STARTUP, "apInit(): Starting AP with SSID=%s IP=%d.%d.%d.%d GW=%d.%d.%d.%d NM=%d.%d.%d.%d\n",
+    debugMsg( STARTUP, "apInit(): Starting AP with SSID=%s IP=%d.%d.%d.%d NM=%d.%d.%d.%d\n",
                   _mySSID.c_str(),
                   IP2STR( &ipInfo.ip ),
-                  IP2STR( &ipInfo.gw ),
+//                  IP2STR( &ipInfo.gw ),
                   IP2STR( &ipInfo.netmask ) );
     
     softap_config apConfig;
